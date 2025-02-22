@@ -2,6 +2,7 @@
 
 **Version: 0.1**
 
+<<<<<<< Updated upstream
 This repository contains a **terminal-based chat application** built in Rust, leveraging asynchronous programming and multithreading for real-time communication. The application consists of a **server** and a **client**, allowing multiple users to connect and chat in a shared terminal environment. You can ran several separate terminal clients and emulate users talking. Created and tested on Fedora 40. The development is still open and will continue for the time. 
 
 ---
@@ -26,7 +27,7 @@ Messages are broadcast to all connected clients in real-time, with timestamps an
 
 ## **System Requirements**
 - **Rust and Cargo**: Ensure you have Rust installed. If not, install it from [rustup.rs](https://rustup.rs/).
-- **Unix-like environment**: Tested on **Fedora 40**, but should work on Linux, macOS, and other Unix-like systems.
+- **Unix-like environment**: Tested on **Fedora 40**, but should work on other Linux, macOS and FreeBSD.
 
 ---
 
@@ -80,3 +81,8 @@ This project uses the following Rust crates:
 - **crossterm**: Cross-platform terminal handling.
 - **chrono**: Timestamp formatting.
 - **colored**: Colored text output.
+<<<<<<< Updated upstream
+=======
+
+
+>>>>>>> Stashed changes
