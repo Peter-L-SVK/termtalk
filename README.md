@@ -1,6 +1,6 @@
 # **TermTalk: A Terminal-Based Chat Application in Rust**
 
-This repository contains a **terminal-based chat application** built in Rust, leveraging asynchronous programming and multithreading for real-time communication. The application consists of a **server** and a **client**, allowing multiple users to connect and chat in a shared terminal environment.
+This repository contains a **terminal-based chat application** built in Rust, leveraging asynchronous programming and multithreading for real-time communication. The application consists of a **server** and a **client**, allowing multiple users to connect and chat in a shared terminal environment. Created and tested on Fedora 40. Tge dvelopment is still open and will continue for the time. 
 
 ---
 
