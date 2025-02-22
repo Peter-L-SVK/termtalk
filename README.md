@@ -2,7 +2,7 @@
 
 **Version: 0.1**
 
-This repository contains a smple **terminal-based chat application** built in Rust, leveraging asynchronous programming and multithreading for real-time communication. The application consists of a **server** and a **client**, allowing multiple users to connect and chat in a shared terminal environment. You can ran several separate terminal clients and emulate users talking. Created and tested on Fedora 40. The development is still open and will continue for the time. 
+This repository contains a simple **terminal-based chat application** built in Rust, leveraging asynchronous programming and multithreading for real-time communication. The application consists of a **server** and a **client**, allowing multiple users to connect and chat in a shared terminal environment. You can ran several separate terminal clients and emulate users talking. Created and tested on Fedora 40. The development is still open and will continue for the time. 
 
 ---
 
