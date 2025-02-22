@@ -1,0 +1,23 @@
+[package]
+name = "termtalk"
+version = "0.1.0"
+edition = "2021"
+
+# Define the server binary
+[[bin]]
+name = "server"
+path = "src/server.rs"
+
+# Define the client binary
+[[bin]]
+name = "client"
+path = "src/client.rs"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+colored = "2.0"
+crossterm = "0.26"
+tui = "0.19"
+chrono = "0.4.39"
+unicode-width = "0.1.10"
+strip-ansi-escapes = "0.1.1"
