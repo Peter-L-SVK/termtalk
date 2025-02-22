@@ -39,7 +39,7 @@ cd termtalk
 ```
 
 ### 2. Build the Project
-The included BASH scripts will also bulid the apps and run the binaries.
+The included BASH scripts will also bulid the apps and run the binaries or build them straight away:
 ```bash
 cargo build --release
 ```
