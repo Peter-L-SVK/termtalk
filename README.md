@@ -39,19 +39,20 @@ cd termtalk
 ```
 
 ### 2. Build the Project
+The included BASH scripts will also bulid the apps and run the binaries.
 ```bash
 cargo build --release
 ```
 
 ### 3. Start the Server
-Run the server on your machine:
+You can run included BASH server script to run the server on your machine or:
 ```bash
 ./target/release/server
 ```
 The server will start listening on `127.0.0.1:8080`.
 
 ### 4. Start the Client
-In a new terminal, start the client:
+In a new terminal you can run included BASH script for running client or start the client:
 ```bash
 ./target/release/client
 ```
