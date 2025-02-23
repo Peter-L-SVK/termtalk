@@ -6,6 +6,14 @@ This repository contains a simple **terminal-based chat application** built in R
 
 ---
 
+## **Screenshot**
+
+Here is a screenshot of TermTalk in action:
+
+![TermTalk Chat Screenshot](example.png)
+
+---
+
 ## **Features**
 - **Real-time messaging**: Send and receive messages instantly with other connected users.
 - **Asynchronous I/O**: Built using `tokio` for efficient handling of multiple clients.
