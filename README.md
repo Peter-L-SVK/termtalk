@@ -8,13 +8,14 @@ This repository contains a simple **terminal-based chat application** built in R
 
 ## **Screenshot**
 
-Here is a screenshot of TermTalk in action:
+Here is a screenshot of TermTalk in action(terminal app used: Terminator):
 
 ![TermTalk Chat Screenshot](example.png)
 
 ---
 
 ## **Features**
+- **Buld and run script for server and client**: Script will build apps using **cargo run** if project is biult, they will run only binaries.
 - **Real-time messaging**: Send and receive messages instantly with other connected users.
 - **Asynchronous I/O**: Built using `tokio` for efficient handling of multiple clients.
 - **Terminal UI**: Clean and intuitive terminal interface powered by `tui` and `crossterm`.
