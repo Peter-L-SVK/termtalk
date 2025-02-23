@@ -15,7 +15,7 @@ Here is a screenshot of TermTalk in action(terminal app used: Terminator):
 ---
 
 ## **Features**
-- **Build and run scripts for server and client**: Scripts will build apps using `**cargo run**` if project is built already, they will run only binaries.
+- **Build and run scripts for server and client**: Scripts will build apps using `cargo run` if project is built already, they will run only binaries.
 - **Real-time messaging**: Send and receive messages instantly with other connected users.
 - **Asynchronous I/O**: Built using `tokio` for efficient handling of multiple clients.
 - **Terminal UI**: Clean and intuitive terminal interface powered by `tui` and `crossterm`.
