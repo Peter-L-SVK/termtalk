@@ -81,6 +81,4 @@ This project uses the following Rust crates:
 - **crossterm**: Cross-platform terminal handling.
 - **chrono**: Timestamp formatting.
 - **colored**: Colored text output.
-<<<<<<< Updated upstream
-=======
 
