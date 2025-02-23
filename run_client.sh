@@ -18,4 +18,4 @@ fi
 
 # Run the client
 echo "Starting the client..."
-"$SCRIPT_DIR/target/debug/$CLIENT_BIN"
+"$SCRIPT_DIR/target/release/$CLIENT_BIN"
