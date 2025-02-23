@@ -18,4 +18,4 @@ fi
 
 # Run the server
 echo "Starting the server..."
-"$SCRIPT_DIR/target/debug/$SERVER_BIN"
+"$SCRIPT_DIR/target/release/$SERVER_BIN"
