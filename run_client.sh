@@ -9,7 +9,7 @@ CLIENT_BIN="client"
 # Check if the client binary exists
 if [ ! -f "$SCRIPT_DIR/target/debug/$CLIENT_BIN" ]; then
     echo "Client binary not found. Building the client..."
-    (cd "$SCRIPT_DIR" && cargo build --bin $CLIENT_BIN)
+    (cd "$SCRIPT_DIR" && cargo build --release --bin $CLIENT_BIN)
     if [ $? -ne 0 ]; then
         echo "Failed to build the client."
         exit 1
