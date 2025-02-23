@@ -8,7 +8,7 @@ This repository contains a simple **terminal-based chat application** built in R
 
 ## **Screenshot**
 
-Here is a screenshot of TermTalk in action(terminal app used: Terminator):
+Here is a screenshot of TermTalk in action (terminal app used: Terminator):
 
 ![TermTalk Chat Screenshot](example.png)
 
