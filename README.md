@@ -17,7 +17,7 @@ Here is a screenshot of TermTalk in action (terminal used in the picture: [Termi
 ## **New Features in Version 0.3**
 - **Improved UI Responsiveness**: Optimized the terminal interface for smoother updates.
 - **Improved mentioned highlighting**: Now tag @all is highlited for all logged users in.
-- **Username check**: Server now checks if logging username is already online and prompts user for new one.
+- **Username check**: Server now checks if logging in username is already online and prompts user for new one.
 - **Enhanced Error Handling**: Improved error messages for better debugging.
 - **Code Optimization**: Reduced redundant processing for better performance.
 
