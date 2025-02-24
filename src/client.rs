@@ -32,7 +32,7 @@ async fn main() -> std::io::Result<()> {
     execute!(stdout, EnterAlternateScreen)?;
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
-
+    
     // Create a log file
     let log_file = OpenOptions::new()
         .create(true)
@@ -45,7 +45,9 @@ async fn main() -> std::io::Result<()> {
     // Helper function to log debug messages to the log file
     async fn log_debug(log_file: &Arc<Mutex<std::fs::File>>, message: &str) {
         let mut file = log_file.lock().await; // Use .await for tokio::sync::Mutex
-        writeln!(&mut *file, "{}", message).expect("Failed to write to log file");
+        if writeln!(&mut *file, "{}", message).is_err() {
+            eprintln!("Failed to write to log file: {}", message);
+        }
     }
 
     // Log terminal initialization
@@ -127,7 +129,48 @@ async fn main() -> std::io::Result<()> {
                         // Show error message if username is empty
                         error_message = "Error: Username cannot be empty!".to_string();
                     } else {
-                        break; // Exit loop if username is valid
+			// Send the username to the server
+			{
+			    let mut write_stream = write_stream.lock().await;
+			    if write_stream.write_all(format!("{}\n", username).as_bytes()).await.is_err() {
+				let debug_message = format!("[DEBUG] Failed to send username to server");
+				log_debug(&log_file, &debug_message).await; // Log to file
+				return Ok(());
+			    }
+			}
+			
+			// Read the server's response
+			let mut response = String::new();
+			if reader.read_line(&mut response).await.is_err() {
+			    let debug_message = format!("[DEBUG] Failed to read server response");
+			    log_debug(&log_file, &debug_message).await; // Log to file
+			    return Ok(());
+			}
+			
+			// Log the server's response
+			let debug_message = format!("[DEBUG] Server response: {}", response.trim());
+			log_debug(&log_file, &debug_message).await; // Log to file
+			
+			// Filter out the "Enter your username: " part from the response
+			let response = response.trim().strip_prefix("Enter your username: ").unwrap_or(response.trim());
+			
+			// Check if the server rejected the username
+			if response == "ERROR: Username is already taken. Please choose a different one." {
+			    // Show error message if username is already taken
+			    error_message = response.to_string();
+			    username.clear(); // Clear the username input
+			    continue; // Go back to the username input loop
+			}
+			
+			// Check if the server accepted the username
+			if response == "SUCCESS: Username accepted." {
+			    break; // Proceed to the chat state
+			}
+			
+			// If the response is unexpected, show an error and retry
+			error_message = "Unexpected server response. Please try again.".to_string();
+			username.clear(); // Clear the username input
+			continue; // Go back to the username input loop
                     }
                 }
                 KeyCode::Backspace => {
@@ -140,19 +183,6 @@ async fn main() -> std::io::Result<()> {
                 }
                 _ => {}
             }
-        }
-    }
-    let username = username.trim().to_string();
-    let debug_message = format!("[DEBUG] Username set to: {}", username);
-    log_debug(&log_file, &debug_message).await; // Log to file
-
-    // Send the username to the server
-    {
-        let mut write_stream = write_stream.lock().await;
-        if write_stream.write_all(format!("{}\n", username).as_bytes()).await.is_err() {
-            let debug_message = format!("[DEBUG] Failed to send username to server");
-            log_debug(&log_file, &debug_message).await; // Log to file
-            return Ok(());
         }
     }
 
@@ -289,93 +319,86 @@ async fn main() -> std::io::Result<()> {
         }
 
         // Receive messages from the broadcast channel
-        while let Ok((sender_username, message)) = receiver.try_recv() {
-            // Filter out the "Enter your username:" line
-            if message.contains("Enter your username:") {
-                continue; // Skip this message
-            }
-
-            // Filter out non-SERVER "joined the chat!" messages
-            if message.contains("joined the chat!") && !message.starts_with("SERVER:") {
-                continue; // Skip this message if it's a non-SERVER "joined the chat!" message
-            }
-
-            // Format and display the message
-            let timestamp = Local::now().format("[%d.%m.%Y %H:%M]").to_string();
-
-            // Split the message into username and content
-            let mut parts = message.splitn(2, ':');
-            let message_username = parts.next().unwrap_or("").trim(); // Extract the username part
-            let message_content = parts.next().unwrap_or("").trim(); // Extract the message content
-
-            // Check if the message is from SERVER
-            let is_server_message = message_username == "SERVER";
-
-            // Helper function to calculate the visible width of a string (ignoring ANSI escape sequences)
-            let visible_width = |s: &str| -> usize {
-                let stripped = strip_ansi_escapes(s).unwrap_or_else(|_| s.as_bytes().to_vec());
-                let stripped_str = String::from_utf8_lossy(&stripped);
-                stripped_str.width() // Measure the visible width
-            };
-
-            // Combine the timestamp, colored username, and formatted content
-            let formatted_message = if is_server_message {
-                // Format the entire message in magenta
-                format!(
-                    "{} {}: {}", // Format: [timestamp] username: message
-                    timestamp.black(), // Timestamp in black
-                    message_username.magenta(), // SERVER in magenta
-                    message_content.magenta() // Message content in magenta
-                )
-            } else {
-                // Regular user message
-                let colored_username = if message_username == username {
-                    message_username.green().to_string() // Logged-in user's username is green
-                } else {
-                    message_username.blue().to_string() // Other users' usernames are blue
-                };
-
-                // Apply mention highlighting
-                let formatted_content = if message_content.contains(&format!("@{}", username)) {
-                    // If the message contains a mention of the logged-in user, highlight it in red and bold
-                    message_content
-                        .split_whitespace()
-                        .map(|word| {
-                            if word == &format!("@{}", username) {
-                                word.red().bold().to_string()
-                            } else {
-                                word.to_string()
-                            }
-                        })
-                        .collect::<Vec<String>>()
-                        .join(" ")
-                } else {
-                    // Otherwise, leave the message content as is
-                    message_content.to_string()
-                };
-
-                // Calculate the visible width of the username
-                let username_width = visible_width(&colored_username);
-
-                // Pad the username to a minimum width of 10 characters
-                let padded_username = format!("{:width$}", colored_username, width = username_width.max(10));
-
-                // Combine the timestamp, padded username, and formatted content
-                format!(
-                    "{} {}: {}", // Format: [timestamp] username: message
-                    timestamp.black(), // Timestamp in black
-                    padded_username, // Padded username
-                    formatted_content // Formatted message content
-                )
-            };
-
-            // Add the formatted message to the UI
-            messages.push(formatted_message);
-            let debug_message = format!("[DEBUG] Received message from {}: {}", sender_username, message);
-            log_debug(&log_file, &debug_message).await; // Log to file
-        }
+	while let Ok((sender_username, message)) = receiver.try_recv() {
+	    // Filter out the "Enter your username:" line
+	    if message.contains("Enter your username:") {
+		continue; // Skip this message
+	    }
+	    
+	    // Format and display the message
+	    let timestamp = Local::now().format("[%d.%m.%Y %H:%M]").to_string();
+	    
+	    // Check if the message is from SERVER
+	    let is_server_message = message.starts_with("SERVER:");
+	    
+	    // Helper function to calculate the visible width of a string (ignoring ANSI escape sequences)
+	    let visible_width = |s: &str| -> usize {
+		let stripped = strip_ansi_escapes(s).unwrap_or_else(|_| s.as_bytes().to_vec());
+		let stripped_str = String::from_utf8_lossy(&stripped);
+		stripped_str.width() // Measure the visible width
+	    };
+	    
+	    // Combine the timestamp, colored username, and formatted content
+	    let formatted_message = if is_server_message {
+		// Format the entire message in magenta
+		format!(
+		    "{} {}", // Format: [timestamp] message
+		    timestamp.black(), // Timestamp in black
+		    message.magenta() // Entire message in magenta
+		)
+	    } else {
+		// Regular user message
+		let mut parts = message.splitn(2, ':');
+		let message_username = parts.next().unwrap_or("").trim(); // Extract the username part
+		let message_content = parts.next().unwrap_or("").trim(); // Extract the message content
+		
+		let colored_username = if message_username == username {
+		    message_username.green().to_string() // Logged-in user's username is green
+		} else {
+		    message_username.blue().to_string() // Other users' usernames are blue
+		};
+		
+		// Apply mention highlighting
+		let formatted_content = if message_content.contains(&format!("@{}", username)) || message_content.contains("@all") {
+		    // If the message contains a mention of the logged-in user or @all, highlight it in red and bold
+		    message_content
+			.split_whitespace()
+			.map(|word| {
+			    if word == &format!("@{}", username) || word == "@all" {
+				word.red().bold().to_string() // Highlight @username and @all in red bold
+			    } else {
+				word.to_string()
+			    }
+			})
+			.collect::<Vec<String>>()
+			.join(" ")
+		} else {
+		    // Otherwise, leave the message content as is
+		    message_content.to_string()
+		};
+		
+		// Calculate the visible width of the username
+		let username_width = visible_width(&colored_username);
+		
+		// Pad the username to a minimum width of 10 characters
+		let padded_username = format!("{:width$}", colored_username, width = username_width.max(10));
+		
+		// Combine the timestamp, padded username, and formatted content
+		format!(
+		    "{} {}: {}", // Format: [timestamp] username: message
+		    timestamp.black(), // Timestamp in black
+		    padded_username, // Padded username
+		    formatted_content // Formatted message content
+		)
+	    };
+	    
+	    // Add the formatted message to the UI
+	    messages.push(formatted_message);
+	    let debug_message = format!("[DEBUG] Received message from {}: {}", sender_username, message);
+	    log_debug(&log_file, &debug_message).await; // Log to file
+	}
     }
-
+    
     // Clean up terminal after exit
     let debug_message = format!("[DEBUG] Cleaning up terminal");
     log_debug(&log_file, &debug_message).await; // Log to file
