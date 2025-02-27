@@ -16,13 +16,13 @@ use tui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     widgets::{Block, Borders, Paragraph},
-    text::{Text, Span, Spans}, // Import Spans as well
+    text::{Text, Span, Spans}, 
     style::{Style, Color},
     Terminal,
 };
-use tokio::time::{self, Duration}; // Add tokio::time for interval
-use unicode_width::UnicodeWidthStr; // Add this crate to measure visible width
-use strip_ansi_escapes::strip as strip_ansi_escapes; // Add this crate to strip ANSI escape sequences
+use tokio::time::{self, Duration}; 
+use unicode_width::UnicodeWidthStr; 
+use strip_ansi_escapes::strip as strip_ansi_escapes; 
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
