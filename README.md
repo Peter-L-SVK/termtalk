@@ -44,7 +44,7 @@ Messages are broadcast to all connected clients in real-time, with timestamps an
 
 ## **System Requirements**
 - **Rust and Cargo**: Ensure you have Rust installed. If not, install it from [rustup.rs](https://rustup.rs/).
-- **Unix-like environment**: Tested on **Fedora 40**, but should work on other Linux distributions, macOS, and FreeBSD.
+- **Unix-like environment**: Tested on **Fedora 40**, but should work on other Linux distributions, macOS and FreeBSD.
 
 ---
 
