@@ -1,6 +1,6 @@
 # **TermTalk: A Terminal-Based Chat Application in Rust**
 
-**Version: 0.3**
+**Version: 0.5**
 
 This repository contains a simple **terminal-based chat application** built in Rust, leveraging asynchronous programming and multithreading for real-time communication. The application consists of a **server** and a **client**, allowing multiple users to connect and chat in a shared terminal environment. You can run several separate terminal clients and emulate users talking. Created and tested on Fedora 40. The development is still ongoing and will continue for the time being. This is a hobby project of mine and a proof of concept rather than a proper application.
 
@@ -11,6 +11,13 @@ This repository contains a simple **terminal-based chat application** built in R
 Here is a screenshot of TermTalk in action (terminal used in the picture: [Terminator](https://gnome-terminator.org/)):
 
 ![TermTalk Chat Screenshot](example.png)
+
+---
+
+## **New Features in Version 0.5**
+- **New UI functionality**: Now you can see list of active users by pressing Ctrl+L.
+- **Reworked logic**: Now instead of redundant code everthing is in utlis lib and logging.
+- **UI improvements**: Interface now prompting wich key is for quit or return from user list.
 
 ---
 
